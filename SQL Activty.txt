@@ -1,0 +1,16 @@
+126.  List the emps who are senior to BLAKE working at CHICAGO & BOSTON.
+select * from emp e ,dept d where d.loc in ('CHICAGO', 'BOSTON') and e.hiredate >(select e.hiredate from emp e where e.ename = 'BLAKE');
+
+ 
+
+127. List the emps of Grade 3,4 belongs to the dept ACCOUNTING and RESEARCH whose Sal is more than ALLEN and exp more than SMITH in the asc order of Exp.
+select * from emp e where e.deptno in (select d.deptno from dept d where d.dname in ('ACCOUNTING','RESEARCH') )
+and e.sal >(select sal from emp where ename = 'ALLEN') and e.hiredate <( select hiredate from emp where ename = 'SMITH') and
+e.empno in (select e.empno from emp e ,salgrade s where e.sal between s.losal and s.hisal and s.grade in (3,4))
+order by e.hiredate asc;
+
+
+ 
+
+128. List the emps whose jobs same as SMITH or ALLEN.
+select * from emp where job = (select job from emp where ename = 'SMITH') or job = (select job from emp where ename = 'ALLEN');
