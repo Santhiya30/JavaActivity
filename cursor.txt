@@ -1,0 +1,14 @@
+set serveroutput on;
+declare
+  employees  emp%rowtype;
+cursor count(sal number) is select * from emp where ename = 'smith';
+begin
+     open count;
+     loop
+     fetch count into employees;
+     exit when count%NOTFOUND;
+     dbms_output.put_line(employees.empno||', '||employees.sal);
+     end loop;
+     close count;
+end;
+/
