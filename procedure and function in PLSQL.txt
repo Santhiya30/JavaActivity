@@ -1,0 +1,55 @@
+1.Create a stored procedure called UPD_SAL to update the  salaries
+for a specific job in the EMP table.
+Pass three parameters to the procedure: the job , a new minimum salary, and a new
+maximum salary for the job. Add exception handling to account for an invalid job name in the
+EMP table. Also, raise an exception if the maximum salary supplied is less than the
+minimum salary.
+-------------------------------------------------------
+
+set serveroutput on;
+CREATE  procedure upd_sal(jobs in varchar(2), minsal in number, maxsal in number)
+is
+dummy_var varchar(1);
+res_exe exception;
+sal_error exception;
+pragma EXCEPTION_INIT (res_exe , -54);
+begin
+if (maxsal < minsal) 
+then
+dbms_output.put_outline('error max sal should be > min sal');
+raise sal_error;
+end if;
+select '' into dummy_var from emp2 where emp = jobs;
+for update of min_salary nowait;
+update emp2
+set min_salary = pminsal,
+max_salary = maxsal
+where emp = jobs;
+exception
+when res_exe then
+raise application error(-20001, 'Job information is currently locked, try later.');
+when NO_DATA_FOUND then
+raise application error(-20001, 'This job ID does not exist');
+when sal_error then
+raise application error(-20001,'Data error..Max salary should be more than min salary');
+end upd_sal;
+/
+---------------------
+2.Make these functions available in a package name EMPPACK...........
+-------------------
+create or replace package body emppack
+ as
+    procedure pro(num in number,enam out varchar2) is
+    begin
+     select ename into  enam from emp where empno=num;
+      dbms_output.put_line(' Ename is :' || enam);
+    end pro;
+    
+    function tax(val in number) return number
+    is
+    begin
+          return (val*0.10);
+    end tax;
+end emppack;
+ /
+--------------------------------------------------------
